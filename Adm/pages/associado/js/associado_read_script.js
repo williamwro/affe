@@ -951,7 +951,7 @@ function filtra_associado(codigo,divisao){
     table_associados = $('#tabela_producao_assoc').DataTable({
         "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "todos"]],
         "destroy": true,
-        "processing": true,
+        "processing": false,
         "serverSide": false,
         "paging": true,
         "deferRender": true,
