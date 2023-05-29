@@ -3,7 +3,7 @@ var usuario_cod;
 var divisao;
 var divisao_nome;
 var table_associados;
-var C_cep = $("#C_cep");
+var C_cep_assoc = $("#C_cep_assoc");
 var cidadex;
 var d = new Date();
 var curr_date = d.getDate();
@@ -22,9 +22,9 @@ $(document).ready(function(){
     //$("#operation").val("Add");
     $('#C_telres').mask('(99)9999-9999');
     $('#C_telcom').mask('(99)9999-9999');
-    $('#C_cel').mask('(99)99999-9999');
-    C_cep.mask("99.999-999");
-    $('#C_cpf').mask('999.999.999-99');
+    $('#C_cel_assoc').mask('(99)99999-9999');
+    C_cep_assoc.mask("99.999-999");
+    $('#C_cpf_assoc').mask('999.999.999-99');
     $('#C_nascimento').mask('99/99/9999');
     $('#C_datadesfiliacao').mask('99/99/9999');
     $("#C_salario").maskMoney({
@@ -32,7 +32,7 @@ $(document).ready(function(){
         decimal: ",",
         thousands: "."
     });
-    $("#C_limite").maskMoney({
+    $("#C_limite_assoc").maskMoney({
         prefix: "",
         decimal: ",",
         thousands: "."
@@ -57,20 +57,20 @@ $(document).ready(function(){
 
     $('#divisao').val(divisao);
     var detailRows = [];
-    //$("#frmSenha")[0].reset();
+    //$("#frmSenha_assoc")[0].reset();
     $.getJSON( "pages/associado/associado_situacao.php", function( data ) {
         $.each(data, function (index, value) {
-            $('#C_situacao').append('<option value="' + value.codigo + '">' + value.nome + '</option>');
+            $('#C_situacao_assoc').append('<option value="' + value.codigo + '">' + value.nome + '</option>');
         });
     });
     $.getJSON( "pages/associado/associado_tipos.php", function( data ) {
         $.each(data, function (index, value) {
-            $('#C_tipo').append('<option value="' + value.id_tipo_associado + '">' + value.nome + '</option>');
+            $('#C_tipo_assoc').append('<option value="' + value.id_tipo_associado + '">' + value.nome + '</option>');
         });
     });
     $.getJSON( "pages/associado/associado_empregador.php", { "divisaox": divisao }, function( data ) {
         $.each(data, function (index, value) {
-            $('#C_empregador').append('<option value="' + value.id + '">' + value.nome + '</option>');
+            $('#C_empregador_assoc').append('<option value="' + value.id + '">' + value.nome + '</option>');
         });
     });
     $.getJSON( "pages/associado/associado_funcao.php", function( data ) {
@@ -85,13 +85,12 @@ $(document).ready(function(){
             $('#C_secretaria').append('<option value="' + value.id_secretaria + '">' + value.nome_secretaria + '</option>');
         });
     });
-    $('#tabela_producao tfoot th').each( function () {
+    $('#tabela_producao_assoc tfoot th').each( function () {
         var title = $(this).text();
         if(title !== ""){
             $(this).html( '<input type="text" class="small" placeholder="Busca '+title+'" />' );
         }
     } );
-    debugger;
     usuario_global = sessionStorage.getItem("usuario_global");
     usuario_cod = sessionStorage.getItem("usuario_cod");
     if(divisao === "1"){ //CASSERV
@@ -101,8 +100,15 @@ $(document).ready(function(){
         $('#campo_codigo_casserv').hide();
         $('#campo_C_limite').hide();
     }
-
-    $('#tabela_producao tbody').on('click', 'tr', function () {
+    if(usuario_cod === "13"){ // 13 == isabelle
+        $('#C_limite_assoc').prop( "disabled", true );
+        $('#C_salario').prop( "disabled", true );
+        
+    }else{
+        $('#C_limite_assoc').prop( "disabled", false );
+        $('#C_salario').prop( "disabled", false );
+    } 
+    $('#tabela_producao_assoc tbody').on('click', 'tr', function () {
         if ($(this).hasClass('selected')) {
             $(this).removeClass('selected');
         } else {
@@ -111,8 +117,8 @@ $(document).ready(function(){
         }
     });
     // Add event listener for opening and closing details
-    $('#tabela_producao tbody').on( 'click', 'tr td.details-control', function () {
-  
+    $('#tabela_producao_assoc tbody').on( 'click', 'tr td.details-control', function () {
+
         var tr = $(this).closest('tr');
         var row = table_associados.row( tr );
         var idx = $.inArray( tr.attr('id'), detailRows );
@@ -136,14 +142,13 @@ $(document).ready(function(){
     });
     function limpa_formulario_cep() {
         // Limpa valores do formulário de cep.
-        $("#C_endereco").val("");
-        $("#C_bairro").val("");
-        $("#C_cidade").val("");
-        $("#C_uf").val("");
+        $("#C_nome_assoc").val("");
+        $("#C_bairro_assoc").val("");
+        $("#C_cidade_assoc").val("");
+        $("#C_uf_assoc").val("");
     }
     //Quando o campo cep perde o foco.
-    $("#C_cep").blur(function() {
-
+    $("#C_cep_assoc").blur(function() {
         //Nova variável "cep" somente com dígitos.
         var cep = $(this).val().replace(/\D/g, '');
 
@@ -157,10 +162,10 @@ $(document).ready(function(){
             if(validacep.test(cep)) {
 
                 //Preenche os campos com "..." enquanto consulta webservice.
-                //$("#C_endereco").val("");
-                //$("#C_bairro").val("");
-                //$("#C_cidade").val("");
-                //$("#C_uf").val("");
+                //$("#C_nome_assoc").val("");
+                //$("#C_bairro_assoc").val("");
+                //$("#C_cidade_assoc").val("");
+                //$("#C_uf_assoc").val("");
                 //$("#ibge").val("...");
 
                 //Consulta o webservice viacep.com.br/
@@ -168,10 +173,10 @@ $(document).ready(function(){
 
                     if (!("erro" in dados)) {
                         //Atualiza os campos com os valores da consulta.
-                        $("#C_uf").val(dados.uf).change();
-                        $("#C_endereco").val(dados.logradouro);
-                        $("#C_bairro").val(dados.bairro);
-                        $("#C_cidade").val(dados.localidade);
+                        $("#C_uf_assoc").val(dados.uf).change();
+                        $("#C_endereco_assoc").val(dados.logradouro);
+                        $("#C_bairro_assoc").val(dados.bairro);
+                        $("#C_cidade_assoc").val(dados.localidade);
                         validar();
                         //$("#ibge").val(dados.ibge);
                     } //end if.
@@ -199,15 +204,15 @@ $(document).ready(function(){
         $.each(data, function (key, val) {
             options += '<option value="' + val.sigla + '">' + val.sigla + '</option>';
         });
-        $("#C_uf").html(options);
-        $('#C_uf').val($('#C_uf option').eq(11).val());
+        $("#C_uf_assoc").html(options);
+        $('#C_uf_assoc').val($('#C_uf_assoc option').eq(11).val());
 
-        $("#C_uf").change(function () {
+        $("#C_uf_assoc").change(function () {
 
             var options_cidades = '';
             var str = "";
 
-            $("#C_uf option:selected").each(function () {
+            $("#C_uf_assoc option:selected").each(function () {
                 str += $(this).text();
             });
             options_cidades = '<option value="">escolha a cidade</option>';
@@ -219,12 +224,12 @@ $(document).ready(function(){
                     });
                 }
             });
-            $("#C_cidade").html(options_cidades);
+            $("#C_cidade_assoc").html(options_cidades);
         }).change();
     });
     $.getJSON( "../Adm/pages/conta/meses_conta.php",{ "origem": "ultimo_mes" }, function( data ) {
         $('#C_ultimo_mes').append('<option value="todos">---</option>');
-     
+       
         $.each(data, function (index, value) {
             if (value.abreviacao !== undefined){
                 $('#C_ultimo_mes').append('<option value="' + value.abreviacao + '">' + value.abreviacao + '</option>');
@@ -232,14 +237,14 @@ $(document).ready(function(){
         });
     });
 });
-$("#C_nome").keypress(function(event) {
+$("#C_nome_assoc").keypress(function(event) {
     var character = String.fromCharCode(event.keyCode);
     return isValid(character);
 });
 function isValid(str) {
     return !/[~`!@#$%\^&*()+=\-\[\]\\'´.;,/{}|\\":<>\?]/g.test(str);
 }
-$('#C_matricula').on('keypress', function (event) {
+$('#C_matricula_assoc').on('keypress', function (event) {
     var regex = new RegExp("^[0-9]+$");
     var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
     if (!regex.test(key)) {
@@ -247,7 +252,7 @@ $('#C_matricula').on('keypress', function (event) {
         return false;
     }
 });
-$(document).on('click','.update',function () {
+$(document).on('click','.update_assoc',function () {
    
     var cod_associado = $(this).attr("id");
     var tdobj = $(this).closest('tr').find('td');
@@ -260,48 +265,47 @@ $(document).on('click','.update',function () {
         data: {cod_associado : cod_associado, empregador: empregador},
         dataType: "json",
         success:function (data) {
-
             $.fn.modal.Constructor.prototype.enforceFocus = function() {};
-            $("#ModalEditaAssociado").modal("show");
-           
-            $("#C_nome").val(data.nome);
-            $("#C_endereco").val(data.endereco);
+            $("#ModalEdita").modal("show");
+            
+            $("#C_nome_assoc").val(data.nome);
+            $("#C_endereco_assoc").val(data.endereco);
             if(data.data_filiacao){
-                $("#C_datacadastro").val(data.data_filiacao);
+                $("#C_datacadastro_assoc").val(data.data_filiacao);
             }else{
-                $("#C_datacadastro").val(data.data_filiacao);
+                $("#C_datacadastro_assoc").val(data.data_filiacao);
             }
-            $("#C_complemento").val(data.complemento);
-            $("#C_bairro").val(data.bairro);
-            $("#C_numero").val(data.numero);
-            $("#C_cpf").val(data.cpf);
-            $("#C_rg").val(data.rg);
-            $('[name=C_uf] option').filter(function() {
+            $("#C_complemento_assoc").val(data.complemento);
+            $("#C_bairro_assoc").val(data.bairro);
+            $("#C_numero_assoc").val(data.numero);
+            $("#C_cpf_assoc").val(data.cpf);
+            $("#C_rg_assoc").val(data.rg);
+            $('[name=C_uf_assoc] option').filter(function() {
                 return ($(this).text() === data.uf);
             }).prop('selected', true);
-            $("#C_uf").val(data.uf).change();
+            $("#C_uf_assoc").val(data.uf).change();
             cidadex = data.cidade;
             cidadex = ucFirstAllWords(cidadex);
-            $('[name=C_cidade] option').filter(function() {
+            $('[name=C_cidade_assoc] option').filter(function() {
                 return ($(this).text() === cidadex);
             }).prop('selected', true);
-            C_cep.val(data.cep);
+            C_cep_assoc.val(data.cep);
             $("#C_telres").val(data.telres);
             $("#C_telcom").val(data.telcom);
-            $("#C_cel").val(data.cel);
+            $("#C_cel_assoc").val(data.cel);
             $("#C_nascimento").val(data.nascimento);
             $("#C_salario").val(numeroParaMoeda(data.salario));
-            $("#C_limite").val(numeroParaMoeda(data.limite));
+            $("#C_limite_assoc").val(numeroParaMoeda(data.limite));
             $("#C_limite_hidden").val(numeroParaMoeda(data.limite));
-            $("#C_situacao").val(data.id_situacao);
+            $("#C_situacao_assoc").val(data.id_situacao);
             $("#C_situacao_original").val(data.id_situacao);
-            $("#C_tipo").val(data.tipo);
+            $("#C_tipo_assoc").val(data.tipo);
             $("#C_tipo_original").val(data.tipo);
-            $("#C_empregador").val(data.empregador);
+            $("#C_empregador_assoc").val(data.empregador);
             $("#C_empregador_original").val(data.empregador);
             $("#C_funcao").val(data.codfuncao);
             $("#C_funcao_original").val(data.codfuncao);
-            $("#C_Email").val(data.email);
+            $("#C_Email_assoc").val(data.email);
             $("#C_parcelas_permitidas").val(data.parcelas_permitidas);
             $("#C_datadesfiliacao").val(data.data_desfiliacao);
             $("#C_obs").val(data.obs);
@@ -311,11 +315,11 @@ $(document).on('click','.update',function () {
             $("#C_secretaria").val(data.id_secretaria);
             $("#C_local").val(data.localizacao);
             //if(data.tem_cadastro_conta === true){
-            //    $("#C_matricula").attr('disabled', 'true');
+            //    $("#C_matricula_assoc").attr('disabled', 'true');
             //}else{
-            //    $("#C_matricula").removeAttr('disabled');
+            //    $("#C_matricula_assoc").removeAttr('disabled');
             //}
-            $("#C_matricula").val(data.codigo);
+            $("#C_matricula_assoc").val(data.codigo);
             $('#C_matricula_original').val(data.codigo);
             $("#C_codcaserv_original").val(data.codigo_isa);
             $("#C_codcaserv").val(data.codigo_isa);
@@ -335,20 +339,21 @@ $(document).on('click','.update',function () {
 $("#btnInserir").click(function(){
     $("#frmassociado")[0].reset();
     $("#rotulo_associado").html("Cadastrando");
-    $("#C_empregador_origem").val(0);
+    $("#C_empregador_assoc").val(0);
+    $("#C_empregador_original").val("0");
     $.fn.modal.Constructor.prototype.enforceFocus = function() {};
-    $("#ModalEditaAssociado").modal("show");
+    $("#ModalEdita").modal("show");
     $('#operation').val("Add");
     var d = new Date().toLocaleString("pt-BR", {timeZone: "America/Sao_Paulo"});
     var d2 = d.substring(0,10);
-    $('#C_datacadastro').val(d2);
-    $('#C_uf').val($('#C_uf option').eq(11).val());
-    $('#C_cidade').val($('#C_cidade option').eq(835).val());
-    $("#C_matricula").removeAttr('disabled');
+    $('#C_datacadastro_assoc').val(d2);
+    $('#C_uf_assoc').val($('#C_uf_assoc option').eq(11).val());
+    $('#C_cidade_assoc').val($('#C_cidade_assoc option').eq(835).val());
+    $("#C_matricula_assoc").removeAttr('disabled');
 });
 $("#btnSalvar").click(function(event){
    waitingDialog.show('Gravando, aguarde ...');
-  
+   
    $("#btnSalvar").attr("disabled", true);
    $('#frmassociado').validator('validate');
    var campo_vazio = validar();
@@ -362,7 +367,7 @@ $("#btnSalvar").click(function(event){
                dataType: "json",
                async: false,
                success: function (data) {
-              
+                    
                    if (data.resultado === "nao repitido") {
 
                        $.ajax({
@@ -395,7 +400,7 @@ $("#btnSalvar").click(function(event){
                                $("#frmassociado")[0].reset();
                                $("#btnSalvar").attr("disabled", false);
                                waitingDialog.hide();
-                               $("#ModalEditaAssociado").modal('hide');
+                               $("#ModalEdita").modal('hide');
                                table_associados.ajax.reload();
                            }
                        });
@@ -403,13 +408,13 @@ $("#btnSalvar").click(function(event){
                        BootstrapDialog.show({
                            closable: false,
                            title: 'Atenção',
-                           message: 'A matricula : '+$("#C_matricula").val()+' já existe no empregador : '+$( "#C_empregador option:selected" ).text()+'.',
+                           message: 'A matricula : '+$("#C_matricula_assoc").val()+' já existe no empregador : '+$( "#C_empregador_assoc option:selected" ).text()+'.',
                            buttons: [{
                                cssClass: 'btn-warning',
                                label: 'Ok',
                                action: function (dialogItself) {
                                    dialogItself.close();
-                                   $("#C_Senha").focus();
+                                   $("#C_Senha_assoc").focus();
                                }
                            }]
                        });
@@ -456,7 +461,7 @@ $("#btnSalvar").click(function(event){
                                            label: 'Ok',
                                            action: function (dialogItself) {
                                                dialogItself.close();
-                                               //$("#C_Senha").focus();
+                                               //$("#C_Senha_assoc").focus();
                                            }
                                        }]
                                    });
@@ -471,7 +476,7 @@ $("#btnSalvar").click(function(event){
                                            label: 'Ok',
                                            action: function (dialogItself) {
                                                dialogItself.close();
-                                               //$("#C_Senha").focus();
+                                               //$("#C_Senha_assoc").focus();
                                            }
                                        }]
                                    });
@@ -479,7 +484,7 @@ $("#btnSalvar").click(function(event){
                                $("#frmassociado")[0].reset();
                                $("#btnSalvar").attr("disabled", false);
                                waitingDialog.hide();
-                               $("#ModalEditaAssociado").modal('hide');
+                               $("#ModalEdita").modal('hide');
                                table_associados.ajax.reload();
                            },
                            error: function (request, status, erro) {
@@ -494,13 +499,13 @@ $("#btnSalvar").click(function(event){
                        BootstrapDialog.show({
                            closable: false,
                            title: 'Atenção',
-                           message: 'A matricula : '+$("#C_matricula").val()+' já existe no empregador : '+$( "#C_empregador option:selected" ).text()+'.',
+                           message: 'A matricula : '+$("#C_matricula_assoc").val()+' já existe no empregador : '+$( "#C_empregador_assoc option:selected" ).text()+'.',
                            buttons: [{
                                cssClass: 'btn-warning',
                                label: 'Ok',
                                action: function (dialogItself) {
                                    dialogItself.close();
-                                   $("#C_Senha").focus();
+                                   $("#C_Senha_assoc").focus();
                                }
                            }]
                        });
@@ -513,25 +518,25 @@ $("#btnSalvar").click(function(event){
    }else {
        var nome_campo;
        switch (campo_vazio) {
-           case 'C_nome':
+           case 'C_nome_assoc':
                nome_campo = "Nome";
                break;
-           case 'C_matricula':
+           case 'C_matricula_assoc':
                nome_campo = "Matricula";
                break;
-           case 'C_endereco':
+           case 'C_nome_assoc':
                nome_campo = "Endereço";
                break;
-           case 'C_numero':
+           case 'C_numero_assoc':
                nome_campo = "Numero";
                break;
-           case 'C_bairro':
+           case 'C_bairro_assoc':
                nome_campo = "Bairro";
                break;
-           case 'C_cidade':
+           case 'C_cidade_assoc':
                nome_campo = "Cidade";
                break;
-           case 'C_uf':
+           case 'C_uf_assoc':
                nome_campo = "uf";
                break;
            case 'C_nascimento':
@@ -540,7 +545,7 @@ $("#btnSalvar").click(function(event){
            case 'C_salario':
                nome_campo = "Salário";
                break;
-           case 'C_limite':
+           case 'C_limite_assoc':
                nome_campo = "Limite";
                break;
        }
@@ -562,12 +567,12 @@ $("#btnSalvar").click(function(event){
    }
    table_associados.columns.adjust().draw();
 });
-$('#tabela_producao').on('click', 'tbody .btnsenha', function () {
+$('#tabela_producao_assoc').on('click', 'tbody .btnsenha_assoc', function () {
 
     var data_row = table_associados.row($(this).closest('tr')).data();
     var cod_associado = data_row.codigo;
     var id_empregador = data_row.id_empregador;
-    $("#frmSenha")[0].reset();
+    $("#frmSenha_assoc")[0].reset();
     $("#ModalSenha").modal("show");
     $.ajax({
         url: "pages/associado/associado_exibe_usuario.php",
@@ -576,16 +581,16 @@ $('#tabela_producao').on('click', 'tbody .btnsenha', function () {
         dataType: "json",
         success: function (data) {
 
-            $("#cod_associado").val(data.matricula);
+            $("#cod_associado_senha").val(data.matricula);
             $("#senha_associado").val(data.senha);
-            $("#C_Senha").val(data.senha);
+            $("#C_Senha_assoc").val(data.senha);
             $("#associado_rotulo").html(data.nome);
             $("#existe_senha").val(data.existesenha);
-            $("#id_empregador").val(id_empregador);
+            $("#id_empregador_senha").val(id_empregador);
         }
     })
  });
-/*$('#tabela_producao').on('click', 'tbody .btnexcluir', function () {
+/*$('#tabela_producao_assoc').on('click', 'tbody .btnexcluir', function () {
 
     var data_row = table_associados.row($(this).closest('tr')).data();
     var cod_associado = data_row.codigo;
@@ -636,7 +641,7 @@ $('#tabela_producao').on('click', 'tbody .btnsenha', function () {
                                                 label: 'Ok',
                                                 action: function (dialogItself) {
                                                     dialogItself.close();
-                                                    //$("#C_Senha").focus();
+                                                    //$("#C_Senha_assoc").focus();
                                                     table_associados.ajax.reload();
                                                 }
                                             }]
@@ -662,7 +667,7 @@ $('#tabela_producao').on('click', 'tbody .btnsenha', function () {
                         label: 'Ok',
                         action: function(dialogItself){
                             dialogItself.close();
-                            $("#C_Senha").focus();
+                            $("#C_Senha_assoc").focus();
                         }
                     }]
                 });
@@ -671,15 +676,15 @@ $('#tabela_producao').on('click', 'tbody .btnsenha', function () {
     });
 });*/
 $("#btnsalvarsenha").click(function(event){
-    var senha = $("#C_Senha").val();
-    var confirmasenha = $("#C_Confirma_Senha").val();
+    var senha = $("#C_Senha_assoc").val();
+    var confirmasenha = $("#C_Confirma_Senha_assoc").val();
     if(senha !== ""){
         if(confirmasenha !== ""){
             if(senha === confirmasenha){
                 $.ajax({
                     url:"pages/associado/associado_salvar_senha.php",
                     method: "POST",
-                    data: $('#frmSenha').serialize(),
+                    data: $('#frmSenha_assoc').serialize(),
                     success:function (data) {
                         if (data === "senha_fazia"){
                             BootstrapDialog.show({
@@ -691,7 +696,7 @@ $("#btnsalvarsenha").click(function(event){
                                     label: 'Ok',
                                     action: function(dialogItself){
                                         dialogItself.close();
-                                        $("#C_Senha").focus();
+                                        $("#C_Senha_assoc").focus();
                                     }
                                 }]
                             });
@@ -705,7 +710,7 @@ $("#btnsalvarsenha").click(function(event){
                                     label: 'Ok',
                                     action: function(dialogItself){
                                         dialogItself.close();
-                                        $("#C_Senha").focus();
+                                        $("#C_Senha_assoc").focus();
                                     }
                                 }]
                             });
@@ -752,7 +757,7 @@ $("#btnsalvarsenha").click(function(event){
                         label: 'Ok',
                         action: function(dialogItself){
                             dialogItself.close();
-                            $("#C_Senha").focus();
+                            $("#C_Senha_assoc").focus();
                         }
                     }]
                 });
@@ -767,7 +772,7 @@ $("#btnsalvarsenha").click(function(event){
                     label: 'Ok',
                     action: function(dialogItself){
                         dialogItself.close();
-                        $("#C_Confirma_Senha").focus();
+                        $("#C_Confirma_Senha_assoc").focus();
                     }
                 }]
             });
@@ -783,7 +788,7 @@ $("#btnsalvarsenha").click(function(event){
                 label: 'Ok',
                 action: function(dialogItself){
                     dialogItself.close();
-                    $("#C_Senha").focus();
+                    $("#C_Senha_assoc").focus();
                 }
             }]
         });
@@ -862,49 +867,51 @@ function format ( d ) {
 }
 function validar(){
 
-    var nome       = $('#C_nome').val();
-    var matricula  = $('#C_matricula').val();
-    var endereco   = $('#C_endereco').val();
-    var numero     = $('#C_numero').val();
-    var bairro     = $('#C_bairro').val();
-    var cidade     = $('#C_cidade').val();
-    var uf         = $('#C_uf').val();
+    var nome       = $('#C_nome_assoc').val();
+    var matricula  = $('#C_matricula_assoc').val();
+    var endereco   = $('#C_nome_assoc').val();
+    var numero     = $('#C_numero_assoc').val();
+    var bairro     = $('#C_bairro_assoc').val();
+    var cidade     = $('#C_cidade_assoc').val();
+    var uf         = $('#C_uf_assoc').val();
     var nascimento = $('#C_nascimento').val();
     var salario    = $('#C_salario').val();
-    var limite     = $('#C_limite').val();
+    var limite     = $('#C_limite_assoc').val();
     if (nome === ""){
-        return $('#C_nome').attr('name');
+        return $('#C_nome_assoc').attr('name');
     }else if (matricula === "") {
-        return $('#C_matricula').attr('name');
+        return $('#C_matricula_assoc').attr('name');
     }else if (endereco === "") {
-        return $('#C_endereco').attr('name');
+        return $('#C_nome_assoc').attr('name');
     }else if (numero === "") {
-        return $('#C_numero').attr('name');
+        return $('#C_numero_assoc').attr('name');
     }else if (bairro === "") {
-        return $('#C_bairro').attr('name');
+        return $('#C_bairro_assoc').attr('name');
     }else if (cidade === "") {
-        return $('#C_cidade').attr('name');
+        return $('#C_cidade_assoc').attr('name');
     }else if (uf === "") {
-        return $('#C_uf').attr('name');
+        return $('#C_uf_assoc').attr('name');
     }else if (nascimento === "") {
         return $('#C_nascimento').attr('name');
     }else if (salario === "") {
         return $('#C_salario').attr('name');
     }else if (limite === "") {
-        return $('#C_limite').attr('name');
+        return $('#C_limite_assoc').attr('name');
     }else{
         return "validou";
     }
 }
 function ucFirstAllWords( str )
-{
-    var pieces = str.split(" ");
-    for ( var i = 0; i < pieces.length; i++ )
-    {
-        var j = pieces[i].charAt(0).toUpperCase();
-        pieces[i] = j + pieces[i].substr(1).toLowerCase();
-    }
-    return pieces.join(" ");
+{   
+    if(str != null){
+        var pieces = str.split(" ");
+        for ( var i = 0; i < pieces.length; i++ )
+        {
+            var j = pieces[i].charAt(0).toUpperCase();
+            pieces[i] = j + pieces[i].substr(1).toLowerCase();
+        }
+        return pieces.join(" ");
+    } 
 }
 $('#RadioTodos').change(function(){
     cod_situacao = $('#RadioTodos').val();
@@ -941,10 +948,10 @@ $('#RadioFalecidos').change(function(){
 });
 
 function filtra_associado(codigo,divisao){
-    table_associados = $('#tabela_producao').DataTable({
+    table_associados = $('#tabela_producao_assoc').DataTable({
         "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "todos"]],
         "destroy": true,
-        "processing": false,
+        "processing": true,
         "serverSide": false,
         "paging": true,
         "deferRender": true,
@@ -952,7 +959,7 @@ function filtra_associado(codigo,divisao){
         "ajax": {
             "url": 'pages/associado/associado_read2.php',
             "method": 'POST',
-            "data":  { 'usuario_global': usuario_global, 'divisao': divisao, 'id_situacao': codigo, 'card1': card1, 'card2': card2, 'card3': card3, 'card4': card4, 'card5': card5, 'card6': card6  },
+            "data":  { 'usuario_global': usuario_global, 'divisao': divisao, 'id_situacao': codigo, 'card1': card1, 'card2': card2, 'card3': card3, 'card4': card4, 'card5': card5, 'card6': card6   },
             "dataType": 'json'
         },
         "order": [[ 2, "asc" ]],
@@ -977,7 +984,7 @@ function filtra_associado(codigo,divisao){
             { "data": "botaoexcluir" }
         ],
         "createdRow": function(row, aData, dataIndex ) {
-          
+           
             if (aData['nome_situacao'] === "ATIVO") {
                 $(row).addClass("green");
             } else if (aData['nome_situacao'] === "DESFILIADO") {
@@ -1015,7 +1022,7 @@ function filtra_associado(codigo,divisao){
     });
 }
 function filtra_associado_sind(codigo,divisao){
-    table_associados = $('#tabela_producao').DataTable({
+    table_associados = $('#tabela_producao_assoc').DataTable({
         "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "todos"]],
         "destroy": true,
         "processing": false,
@@ -1051,7 +1058,7 @@ function filtra_associado_sind(codigo,divisao){
             { "data": "botaoexcluir" }
         ],
         "createdRow": function(row, aData, dataIndex ) {
-   
+           
             if (aData['nome_situacao'] === "ATIVO") {
                 $(row).addClass("green");
             } else if (aData['nome_situacao'] === "DESFILIADO") {
@@ -1094,10 +1101,10 @@ function filtra_associado_sind(codigo,divisao){
         "pagingType": "full_numbers"
     });
 }
-$("#C_situacao").change(function () {
-
+$("#C_situacao_assoc").change(function () {
+    
     if(controle === false) {
-        if($("#C_situacao").val() === "2" || $("#C_situacao").val() === "3"){//desfiliado or falecido
+        if($("#C_situacao_assoc").val() === "2" || $("#C_situacao_assoc").val() === "3"){//desfiliado or falecido
             $("#C_datadesfiliacao").val(curr_date + "/" + curr_month + "/" + curr_year);
             $("#C_filiado").prop("checked", false);
 
@@ -1111,15 +1118,15 @@ $("#C_situacao").change(function () {
     }
 })
 $('#C_filiado').change(function() {
-
+    
     controle = true;
     if ($(this).is(':checked')) {
         $("#C_datadesfiliacao").val('');
-        $("#C_situacao").val('1').change();
+        $("#C_situacao_assoc").val('1').change();
         //$("#C_filiado").prop("checked", true);
     } else {
         $("#C_datadesfiliacao").val(curr_date + "/" + curr_month + "/" + curr_year);
-        $("#C_situacao").val('2').change();
+        $("#C_situacao_assoc").val('2').change();
         //$("#C_filiado").prop("checked", false);
     }
 });

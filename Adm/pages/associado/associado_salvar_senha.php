@@ -2,13 +2,13 @@
 require '../../php/banco.php';
 include "../../php/funcoes.php";
 
-if(isset($_POST['cod_associado'])){
-    $_codigo = $_POST['cod_associado'];
+if(isset($_POST['cod_associado_senha'])){
+    $_codigo = $_POST['cod_associado_senha'];
     $_senha = $_POST['senha_associado'];
-    $_Csenhaconfirma = $_POST['C_Confirma_Senha'];
-    $_Csenha = $_POST['C_Senha'];
+    $_Csenhaconfirma = $_POST['C_Confirma_Senha_assoc'];
+    $_Csenha = $_POST['C_Senha_assoc'];
     $_existe_senha = $_POST['existe_senha'];
-    $id_empregador = $_POST['id_empregador'];
+    $id_empregador = $_POST['id_empregador_senha'];
     $stmt = new stdClass();
     $pdo = Banco::conectar_postgres();
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -17,7 +17,7 @@ if(isset($_POST['cod_associado'])){
     try {
         if ($_existe_senha == "nao") {
             if( $_Csenha != "" && $_Csenhaconfirma != "" ) {
-                if ($_Csenha = $_Csenhaconfirma) {
+                if ($_Csenha == $_Csenhaconfirma) {
 
                         $sql = "INSERT INTO sind.c_senhaassociado(cod_associado, senha, id_empregador) ";
                         $sql .= "VALUES(:codigo_associado, :senha, :id_empregador)";

@@ -5,19 +5,22 @@ date_default_timezone_set('America/Sao_Paulo');
 $date = strftime('%A, %d de %B de %Y', strtotime('today'));
 
 require "../../php/banco.php";
+require "../../php/bancocasserv.php";
 include "../../php/funcoes.php";
 $pdo = Banco::conectar_postgres();
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 $_limite = 0;
 $_limite_hidden = 0;
+$pdocasserv = Bancocasserv::conectar_postgres();
+$pdocasserv->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $_usuario_cod       = $_POST['usuario_cod'];
 $_divisao           = isset($_POST['divisao']) ? $_POST['divisao'] : 0;
-$_matricula         = isset($_POST['C_matricula']) ? $_POST['C_matricula'] : "";
+$_matricula         = isset($_POST['C_matricula_assoc']) ? $_POST['C_matricula_assoc'] : "";
 $_matriculax        = isset($_POST['C_matricula_original']) ? $_POST['C_matricula_original'] : "";
-$_nome              = isset($_POST['C_nome']) ? strtoupper(htmlspecialchars($_POST['C_nome'])) : "";
-$_endereco          = isset($_POST['C_endereco']) ? strtoupper(htmlspecialchars($_POST['C_endereco'])) : "";
-$_numero            = isset($_POST['C_numero']) ? $_POST['C_numero'] : "";
+$_nome              = isset($_POST['C_nome_assoc']) ? strtoupper(htmlspecialchars($_POST['C_nome_assoc'])) : "";
+$_endereco          = isset($_POST['C_endereco_assoc']) ? strtoupper(htmlspecialchars($_POST['C_endereco_assoc'])) : "";
+$_numero            = isset($_POST['C_numero_assoc']) ? $_POST['C_numero_assoc'] : "";
 $_nascimento        = isset($_POST['C_nascimento']) ? converte_data($_POST['C_nascimento']) : null;
 if($_POST['C_codcaserv_original'] == ''){
     $_codcaserv = isset($_POST['C_codcaserv']) ? $_POST['C_codcaserv'] : null;
@@ -38,9 +41,9 @@ if(isset($_POST['C_salario'])){
 }else{
     $_salario = 0;
 }
-if(isset($_POST['C_limite'])){
-    if($_POST['C_limite'] != ''){
-        $_limite = $_POST['C_limite'];
+if(isset($_POST['C_limite_assoc'])){
+    if($_POST['C_limite_assoc'] != ''){
+        $_limite = $_POST['C_limite_assoc'];
         $_limite = str_replace(".","",$_limite);
         $_limite = str_replace(",",".",$_limite);
     }else{
@@ -53,30 +56,30 @@ $_limite_hidden = $_POST['C_limite_hidden'];
 $_limite_hidden = str_replace(".","",$_limite_hidden);
 $_limite_hidden = str_replace(",",".",$_limite_hidden);
 
-$_empregador_novo     = isset($_POST['C_empregador']) ? (int)$_POST['C_empregador'] : 0;
+$_empregador_novo     = isset($_POST['C_empregador_assoc']) ? (int)$_POST['C_empregador_assoc'] : 0;
 $_empregador_original = isset($_POST['C_empregador_original']) ? (int)$_POST['C_empregador_original'] : 0;
 if($_empregador_novo <> $_empregador_original){
     $_empregador = $_empregador_novo;
 }else{
     $_empregador = $_empregador_original;
 }
-$_cep               = isset($_POST['C_cep']) ? str_replace(".", "", $_POST['C_cep']) : "";
+$_cep               = isset($_POST['C_cep_assoc']) ? str_replace(".", "", $_POST['C_cep_assoc']) : "";
 $_telres            = isset($_POST['C_telres']) ? $_POST['C_telres'] : "";
 $_telcom            = isset($_POST['C_telcom']) ? $_POST['C_telcom'] : "";
-$_cel               = isset($_POST['C_cel']) ? $_POST['C_cel'] : "";
-$_bairro            = isset($_POST['C_bairro']) ? strtoupper(htmlspecialchars($_POST['C_bairro'])) : "";
-$_complemento       = isset($_POST['C_complemento']) ? strtoupper(htmlspecialchars($_POST['C_complemento'])) : "";
-$_cidade            = isset($_POST['C_cidade']) ? htmlspecialchars($_POST['C_cidade']) : "";
-$_uf                = isset($_POST['C_uf']) ? $_POST['C_uf'] : "";
-$_tipo_novo         = isset($_POST['C_tipo']) ? (int)$_POST['C_tipo'] : (int)1; //1-EFETIVO,2-CONTRATADO
+$_cel               = isset($_POST['C_cel_assoc']) ? $_POST['C_cel_assoc'] : "";
+$_bairro            = isset($_POST['C_bairro_assoc']) ? strtoupper(htmlspecialchars($_POST['C_bairro_assoc'])) : "";
+$_complemento       = isset($_POST['C_complemento_assoc']) ? strtoupper(htmlspecialchars($_POST['C_complemento_assoc'])) : "";
+$_cidade            = isset($_POST['C_cidade_assoc']) ? htmlspecialchars($_POST['C_cidade_assoc']) : "";
+$_uf                = isset($_POST['C_uf_assoc']) ? $_POST['C_uf_assoc'] : "";
+$_tipo_novo         = isset($_POST['C_tipo_assoc']) ? (int)$_POST['C_tipo_assoc'] : (int)1; //1-EFETIVO,2-CONTRATADO
 $_tipo_original     = isset($_POST['C_tipo_original']) ? (int)$_POST['C_tipo_original'] : (int)1; //1-EFETIVO,2-CONTRATADO
 if($_tipo_novo <> $_tipo_original){
     $_tipo = $_tipo_novo;
 }else{
     $_tipo = $_tipo_original;
 }
-$_rg                = isset($_POST['C_rg']) ? $_POST['C_rg'] : "";
-$_cpf               = isset($_POST['C_cpf']) ? str_replace(".", "", $_POST['C_cpf']) : "";
+$_rg                = isset($_POST['C_rg_assoc']) ? $_POST['C_rg_assoc'] : "";
+$_cpf               = isset($_POST['C_cpf_assoc']) ? str_replace(".", "", $_POST['C_cpf_assoc']) : "";
 $_cpf               = str_replace("-", "", $_cpf);
 $_funcao_novo       = isset($_POST['C_funcao']) ? (int)$_POST['C_funcao'] : (int)0;
 $_funcao_original   = isset($_POST['C_funcao_original']) ? (int)$_POST['C_funcao_original'] : (int)0;
@@ -86,16 +89,16 @@ if($_funcao_novo <> $_funcao_original){
     $_funcao = $_funcao_original;
 }
 $_obs                  = isset($_POST['C_obs']) ? strtoupper($_POST['C_obs']) : "";
-$_id_situacao_novo     = isset($_POST['C_situacao']) ? (int)$_POST['C_situacao'] : (int)1;//1-ATIVO,2-EXONERADO,3-FALECIDO
+$_id_situacao_novo     = isset($_POST['C_situacao_assoc']) ? (int)$_POST['C_situacao_assoc'] : (int)1;//1-ATIVO,2-EXONERADO,3-FALECIDO
 $_id_situacao_original = isset($_POST['C_situacao_original']) ? (int)$_POST['C_situacao_original'] : (int)1;//1-ATIVO,2-EXONERADO,3-FALECIDO
 if($_id_situacao_novo <> $_id_situacao_original){
     $_id_situacao = $_id_situacao_novo;
 }else{
     $_id_situacao = $_id_situacao_original;
 }
-$_email = isset($_POST['C_Email']) ? strtolower($_POST['C_Email']) : "";
-if ($_POST['C_datacadastro'] != ""){
-    $_data_filiacao = converte_data($_POST['C_datacadastro']);
+$_email = isset($_POST['C_Email_assoc']) ? strtolower($_POST['C_Email_assoc']) : "";
+if ($_POST['C_datacadastro_assoc'] != ""){
+    $_data_filiacao = converte_data($_POST['C_datacadastro_assoc']);
 }else{
     $_data_filiacao = null;
 }
@@ -289,7 +292,31 @@ if(isset($_POST["operation"])) {
 
         }
         if ($_divisao === "1") {
-           
+            // ATUALIZAR MATRICULA NO SISTEMA CASSERV TAB ASSOCIADO2 INICIO ******************************
+            $sql4 = "UPDATE casserv.associado2 SET ";
+            $sql4 .= "codigo = :matricula, ";
+            $sql4 .= "empregador = :empregador, ";
+            $sql4 .= "id_secretaria = :id_secretaria, ";
+            $sql4 .= "setor = :setor ";
+            $sql4 .= "WHERE codigo_isa = :codcaserv";
+            $stmt4 = $pdocasserv->prepare($sql4);
+            $stmt4->bindParam(':codcaserv', $_codcaserv, PDO::PARAM_INT);
+            $stmt4->bindParam(':matricula', $_matricula, PDO::PARAM_STR);
+            $stmt4->bindParam(':empregador', $_empregador, PDO::PARAM_INT);
+            $stmt4->bindParam(':id_secretaria', $_secretaria, PDO::PARAM_INT);
+            $stmt4->bindParam(':setor', $_local, PDO::PARAM_STR);
+            $stmt4->execute();
+            // ATUALIZAR MATRICULA NO SISTEMA CASSERV TAB ASSOCIADO2 FIM *********************************
+
+            // ATUALIZAR MATRICULA NO SISTEMA CASSERV TAB CONTA INICIO ***********************************
+            $sql5 = "UPDATE casserv.conta SET ";
+            $sql5 .= "empregador = :empregador ";
+            $sql5 .= "WHERE associado = :codcaserv";
+            $stmt5 = $pdocasserv->prepare($sql5);
+            $stmt5->bindParam(':codcaserv', $_codcaserv, PDO::PARAM_INT);
+            $stmt5->bindParam(':empregador', $_empregador, PDO::PARAM_INT);
+            $stmt5->execute();
+            // ATUALIZAR MATRICULA NO SISTEMA CASSERV TAB CONTA FIM **************************************
         }
         echo $msg_grava_cad;
 

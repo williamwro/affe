@@ -89,10 +89,9 @@ foreach ($result as $row){
     $sub_array["codigo_isa"]    = $row["codigo_isa"];
     $sub_array["bairro"]        = htmlspecialchars($row["bairro"]);
     $sub_array["abreviacao"]    = $row["abreviacao"];
-    $sub_array["botao"]         = '<button type="button" name="update" id="'.$row["codigo"].'" class="btn btn-warning glyphicon glyphicon-edit btn-xs update" data-toggle="tooltip" data-placement="top" title="Alterar"></button>';
-    $sub_array["botaosenha"]    = '<button type="button" name="btnsenha" id="'.$row["codigo"].'" class="btn btn-facebook glyphicon glyphicon-credit-card btn-xs btnsenha" data-toggle="tooltip" data-placement="top" title="Senha do cartão"></button>';
+    $sub_array["botao"]         = '<button type="button" name="update_assoc" id="'.$row["codigo"].'" class="btn btn-warning glyphicon glyphicon-edit btn-xs update_assoc" data-toggle="tooltip" data-placement="top" title="Alterar"></button>';
+    $sub_array["botaosenha"]    = '<button type="button" name="btnsenha_assoc" id="'.$row["codigo"].'" class="btn btn-facebook glyphicon glyphicon-credit-card btn-xs btnsenha_assoc" data-toggle="tooltip" data-placement="top" title="Senha do cartão"></button>';
     $sub_array["botaoexcluir"]  = '<button type="button" name="btnexcluir" id="'.$row["codigo"].'" class="btn btn-danger glyphicon glyphicon-trash btn-xs btnexcluir" data-toggle="tooltip" data-placement="top" title="Excluir" disabled></button>';
-    $sub_array["botaotranfer"]  = '<button type="button" name="btntranfer" id="'.$row["codigo"].'" class="btn btn-danger glyphicon glyphicon-trash btn-xs btntranfer" data-toggle="tooltip" data-placement="top" title="Transfer"></button>';
     $sub_array["id_empregador"] = $row["id_empregador"];
     $someArray['data'][] = $sub_array;
 }
