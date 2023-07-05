@@ -1,6 +1,16 @@
 <?php
-ini_set('display_errors', true);
-error_reporting(E_ALL);
+//ini_set('display_errors', true);
+//error_reporting(E_ALL);
+/* if($conexao=pg_connect("host=34.95.183.208 dbname=affe port=5432 user=postgres password=Abc25149076")){
+    pg_close ($conexao);
+    print "Conexão OK!"; 
+} else {
+    print "Não foi possível estabelecer uma conexão com o banco de dados.";
+} */
+
+echo extension_loaded('pgsql');
+
+
 /*class Banco extends PDO{
 
     static protected $_instance;
@@ -44,7 +54,7 @@ error_reporting(E_ALL);
   //  } else {
         // Connect using TCP
 //echo phpinfo();
-        $username = "postgres";
+    /*     $username = "postgres";
         $password = "Abc25149076";
         $host     = "34.95.183.208"; // google cloud
         $host     = "74.63.238.118"; // iphosting
@@ -58,3 +68,4 @@ error_reporting(E_ALL);
     }else{
         echo "falhou.";
     }
+ */

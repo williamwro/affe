@@ -22,7 +22,7 @@ class Banco extends PDO{
         $password = "Abc25149076";
         $host     = "34.95.183.208"; // google cloud
         //$host     = "74.63.238.118"; // iphosting
-        $database = "affe";
+        $database = "affe"; 
         if(!isset(self::$_instance)){
             self::$_instance = new PDO("pgsql:dbname=".$database.";host=".$host.";port=5432;user=".$username.";password=".$password);        }
         return self::$_instance;
