@@ -1,24 +1,20 @@
-CREATE TABLE IF NOT EXISTS sind.empregador
+CREATE TABLE IF NOT EXISTS empregador
 (
-    id bigint NOT NULL DEFAULT,
-    nome character varying(50) COLLATE pg_catalog."default",
-    responsavel character varying(50) COLLATE pg_catalog."default",
-    telefone character varying(30) COLLATE pg_catalog."default",
-    abreviacao character varying(50) COLLATE pg_catalog."default",
+    id bigint NOT NULL,
+    nome character varying(50),
+    responsavel character varying(50),
+    telefone character varying(30),
+    abreviacao character varying(50),
     divisao integer,
-    CONSTRAINT empregador_pkey PRIMARY KEY (id),
+    CONSTRAINT empregador_pkey PRIMARY KEY (Id),
     CONSTRAINT divisao_fk FOREIGN KEY (divisao)
-        REFERENCES sind.divisao (id_divisao) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
-        NOT VALID
-)
+        REFERENCES divisao (id_divisao));
 
-CREATE TABLE IF NOT EXISTS sind.divisao
+CREATE TABLE IF NOT EXISTS divisao
 (
-    nome character varying(50) COLLATE pg_catalog."default" NOT NULL,
-    cidade character varying(50) COLLATE pg_catalog."default" NOT NULL,
-    id_divisao bigint NOT NULL DEFAULT nextval('sind.divisao_id_divisao_seq'::regclass),
-    descricao character varying COLLATE pg_catalog."default",
+    nome character varying(50) NOT NULL,
+    cidade character varying(50) NOT NULL,
+    id_divisao bigint NOT NULL,
+    descricao character varying,
     CONSTRAINT divisao_pkey PRIMARY KEY (id_divisao)
 )
