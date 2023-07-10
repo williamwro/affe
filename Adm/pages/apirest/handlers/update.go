@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
+	dbsql "makecard.com.br/dbsql/db"
 	"makecard.com.br/models"
 )
 
@@ -18,9 +19,10 @@ func Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var empregador models.Empregador
+	var empregador dbsql.UpdateEmpregadorParams
 
 	err = json.NewDecoder(r.Body).Decode(&empregador)
+
 	if err != nil {
 		log.Printf("Erro ao fazer decode do json %v", err)
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
