@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"log"
 
 	"makecard.com.br/db"
 
@@ -21,7 +22,12 @@ func GetAll() (empregadores []dbsql.Empregador, err error) {
 
 	ctx := context.Background()
 
-	empregadores, err := dt.ListEmpregadores(ctx)
+	empregadores, err = dt.ListEmpregadores(ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println(empregadores)
 
 	return
 }
