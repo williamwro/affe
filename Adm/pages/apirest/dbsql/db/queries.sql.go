@@ -157,10 +157,10 @@ func (q *Queries) ListEmpregadores(ctx context.Context) ([]Empregador, error) {
 	return items, nil
 }
 
-const updateEmpregador = `-- name: UpdateEmpregador :exec
+const updateEmpregador = `-- name: UpdateEmpregador :one
 UPDATE empregador
 	SET id=$2, nome=$3, responsavel=$4, telefone=$5, abreviacao=$6, divisao=$7
-	WHERE Id=$1 RETURNING id, nome, responsavel, telefone, abreviacao, divisao
+	WHERE id=$1 RETURNING id, nome, responsavel, telefone, abreviacao, divisao
 `
 
 type UpdateEmpregadorParams struct {
@@ -173,8 +173,8 @@ type UpdateEmpregadorParams struct {
 	Divisao     sql.NullInt32
 }
 
-func (q *Queries) UpdateEmpregador(ctx context.Context, arg UpdateEmpregadorParams) error {
-	_, err := q.db.ExecContext(ctx, updateEmpregador,
+func (q *Queries) UpdateEmpregador(ctx context.Context, arg UpdateEmpregadorParams) (Empregador, error) {
+	row := q.db.QueryRowContext(ctx, updateEmpregador,
 		arg.ID,
 		arg.ID_2,
 		arg.Nome,
@@ -183,5 +183,14 @@ func (q *Queries) UpdateEmpregador(ctx context.Context, arg UpdateEmpregadorPara
 		arg.Abreviacao,
 		arg.Divisao,
 	)
-	return err
+	var i Empregador
+	err := row.Scan(
+		&i.ID,
+		&i.Nome,
+		&i.Responsavel,
+		&i.Telefone,
+		&i.Abreviacao,
+		&i.Divisao,
+	)
+	return i, err
 }
