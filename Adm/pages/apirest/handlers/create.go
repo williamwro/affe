@@ -6,11 +6,12 @@ import (
 	"log"
 	"net/http"
 
+	dbsql "makecard.com.br/dbsql/db"
 	"makecard.com.br/models"
 )
 
 func Create(w http.ResponseWriter, r *http.Request) {
-	var empregador models.Empregador
+	var empregador dbsql.Empregador
 
 	err := json.NewDecoder(r.Body).Decode(&empregador)
 	if err != nil {
