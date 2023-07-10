@@ -1,17 +1,32 @@
 package models
 
-import "makecard.com.br/db"
+import (
+	"context"
+	"log"
 
-func Get(id int64) (empregador Empregador, err error) {
+	"makecard.com.br/db"
+	dbsql "makecard.com.br/dbsql/db"
+)
+
+func Get(id int64) (empregador []dbsql.Empregador, err error) {
 	conn, err := db.OpenConnection()
 	if err != nil {
 		return
 	}
 	defer conn.Close()
 
-	row := conn.QueryRow(`SELET * FROM sind.empregador WHERE id=$1`, id)
+	conn.Exec(`set search_path='sind'`)
 
-	err = row.Scan(&empregador.ID, &empregador.nome, &empregador.responsavel, &empregador.telefone, &empregador.abreviacao, &empregador.divisao)
+	dt := dbsql.New(conn)
+
+	ctx := context.Background()
+
+	empregador, err = dt.ListEmpregador(ctx, id)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println(empregador)
 
 	return
 }
